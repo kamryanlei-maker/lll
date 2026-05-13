@@ -132,6 +132,8 @@ export default async function handler(req, res) {
 
     const speechRes = await fetch(url, { method: 'POST', body: form });
     const rawText = await speechRes.text();
+    console.log(rawText);
+    
     let speechData;
     try { speechData = JSON.parse(rawText); } catch { speechData = { raw: rawText }; }
 
