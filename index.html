@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pronunciation AI Practice</title>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --dark:#111827; --danger:#dc2626; --green:#047857; --blue:#1d4ed8; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); }
+    header { background:white; border-bottom:1px solid var(--line); padding:24px; }
+    .wrap { max-width:1100px; margin:0 auto; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    h1 { margin:4px 0 0; font-size:34px; }
+    .sub { color:var(--muted); font-size:14px; }
+    .badge { background:#f1f5f9; color:#475569; padding:10px 14px; border-radius:999px; font-size:14px; }
+    main { padding:28px 24px; }
+    .grid { display:grid; grid-template-columns: 1.25fr 0.9fr; gap:22px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:24px; box-shadow:0 1px 3px rgba(15,23,42,.05); margin-bottom:20px; }
+    h2 { margin:0 0 8px; font-size:24px; }
+    h3 { margin:0 0 12px; font-size:19px; }
+    label span { display:block; margin-bottom:8px; color:#475569; font-weight:600; font-size:14px; }
+    input, select { width:100%; padding:13px 14px; border:1px solid #cbd5e1; border-radius:14px; font-size:16px; outline:none; background:white; }
+    input:focus, select:focus { border-color:#64748b; box-shadow:0 0 0 3px rgba(100,116,139,.18); }
+    .two { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .passage { white-space:pre-line; background:#f1f5f9; border:1px solid var(--line); border-radius:16px; padding:18px; line-height:1.75; font-size:17px; }
+    .focus { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
+    .focus div { border:1px solid var(--line); border-radius:14px; padding:12px; background:white; font-size:14px; }
+    button { border:0; border-radius:14px; padding:14px 18px; font-size:16px; font-weight:700; cursor:pointer; background:var(--dark); color:white; }
+    button.secondary { background:#e2e8f0; color:#0f172a; }
+    button.outline { background:white; color:#0f172a; border:1px solid #cbd5e1; }
+    button.danger { background:#dc2626; color:white; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .buttons { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+    audio { width:100%; margin-top:12px; }
+    .recording { color:#dc2626; font-weight:700; margin-top:14px; }
+    .score { margin:14px 0; }
+    .scoretop { display:flex; justify-content:space-between; margin-bottom:6px; font-weight:700; }
+    .bar { height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+    .fill { height:100%; background:#111827; border-radius:999px; }
+    .note { color:var(--muted); font-size:13px; margin-top:5px; }
+    .box { border-radius:16px; padding:15px; margin-top:14px; border:1px solid var(--line); background:#f8fafc; }
+    .ok { background:#ecfdf5; border-color:#bbf7d0; color:#065f46; }
+    .warn { background:#eff6ff; border-color:#bfdbfe; color:#1e40af; }
+    .err { background:#fef2f2; border-color:#fecaca; color:#991b1b; }
+    ul { margin:8px 0 0 18px; padding:0; line-height:1.6; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { background:#f1f5f9; border:1px solid #e2e8f0; padding:8px 12px; border-radius:999px; font-size:14px; }
+    mark { background:#fee2e2; color:#991b1b; font-weight:700; padding:2px 4px; border-radius:5px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th, td { padding:12px; border-top:1px solid var(--line); text-align:left; }
+    th { background:#f1f5f9; color:#475569; }
+    .hide { display:none; }
+    .tabs { display:flex; gap:10px; flex-wrap:wrap; }
+    @media (max-width:900px){ .grid,.two,.focus { grid-template-columns:1fr; } h1{font-size:28px;} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap top">
+      <div>
+        <div class="sub">English Reading Practice</div>
+        <h1>Pronunciation AI Practice</h1>
+      </div>
+      <div class="tabs">
+        <button id="studentTab">Student View</button>
+        <button id="teacherTab" class="outline">Teacher Dashboard</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="studentView" class="grid">
+      <div>
+        <div class="card">
+          <h2>Student Information</h2>
+          <p class="sub">Enter your name before recording.</p>
+          <div class="two">
+            <label><span>Student Name</span><input id="studentName" placeholder="e.g. Chan Tai Man"></label>
+            <label><span>Class</span><select id="studentClass"><option>Form 2B</option><option>Form 3A</option><option>Form 4A</option><option>Form 4B</option><option>Form 5A</option></select></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Reading Passage</h2>
+          <p class="sub">Choose a passage and read it clearly.</p>
+          <label><span>Passage</span><select id="passageSelect"></select></label>
+          <div id="passageText" class="passage" style="margin-top:14px;"></div>
+          <div id="focusBox" class="focus"></div>
+        </div>
+
+        <div class="card">
+          <h2>Record Your Reading</h2>
+          <p class="sub">Press record, read the passage, then submit your recording for Speechace analysis.</p>
+          <div class="buttons">
+            <button id="startBtn">Start Recording</button>
+            <button id="stopBtn" class="danger" disabled>Stop Recording</button>
+            <button id="submitBtn" class="secondary" disabled>Submit Recording</button>
+            <button id="resetBtn" class="outline">Try Again</button>
+          </div>
+          <div id="recordingMsg" class="recording hide">Recording now...</div>
+          <div id="audioBox" class="box hide"><b>Your recording:</b><audio id="audioPlayer" controls></audio></div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h2>Speechace Feedback</h2>
+          <p class="sub">Real AI analysis appears here after submission.</p>
+          <div id="emptyFeedback" class="box">Your feedback will appear here after you submit your recording.</div>
+          <div id="loadingFeedback" class="box hide">Analysing with Speechace...</div>
+          <div id="errorFeedback" class="box err hide"></div>
+          <div id="resultBox" class="hide"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="teacherView" class="hide">
+      <div class="card">
+        <div class="top">
+          <div><h2>Teacher Dashboard</h2><p class="sub">This dashboard stores results only in this browser unless you connect a database.</p></div>
+          <button id="exportBtn">Export CSV</button>
+        </div>
+        <div style="overflow:auto; margin-top:18px; border:1px solid var(--line); border-radius:16px;">
+          <table>
+            <thead><tr><th>Student</th><th>Class</th><th>Passage</th><th>Pronunciation</th><th>Fluency</th><th>Overall</th><th>Submitted At</th></tr></thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const passages = [
+      {
+        id: "passage-one-scones",
+        title: "Passage One: Making Scones",
+        text: `Miss: Now, everyone, listen carefully. Tomorrow we are going to cook something together.\nStudent: Oh, good! What do we need to bring?\nMiss: Please bring a big bowl.\nStudent: OK.\nMiss: I also want you to bring some other things from home. Please write them down on a piece of paper now.\nStudent: Do we need to bring flour, Miss?\nMiss: No, you don’t. We already have some. But I want you to bring sugar, butter, and eggs.\nStudent: OK, Miss. What are we going to cook?\nMiss: They are called scones. They are a kind of cake.\nStudent: Do you spell that S-C-O-N-E-S?\nMiss: Yes, that’s right.\nStudent: How many scones are we going to make?\nMiss: There will be enough to make 48, so everyone can take some home.\nStudent: How long does it take to cook them? An hour?\nMiss: It only takes ten minutes.\nStudent: Are they nice, Miss?\nMiss: Oh yes! They are lovely when they are warm. You can eat them with jam.`,
+        focuses: ["Question intonation", "Clear dialogue reading", "Natural pauses"]
+      },
+      {
+        id: "passage-two-film-review",
+        title: "Passage Two: A Film Review",
+        text: `I loved the first Avatar movie, so I was excited to see its sequel, Avatar: The Way of Water. The story follows two main characters, who now have four kids, as they leave their jungle home to live in the ocean. I think the movie is amazing, charming and breathtaking. The actors dove underwater for real without fake effects, which makes the movie very realistic. Moreover, the love between the family members is really moving. Although the movie is long, it is not dull at all and I love it!`,
+        focuses: ["Expressive tone", "Adjectives for opinions", "Pauses after commas"]
+      },
+      {
+        id: "passage-three-film-language",
+        title: "Passage Three: Film Language",
+        text: `The animation in this film is beautiful, with attention to detail in the character design.\nEach member of the cast gives a fantastic performance.\nI am touched by the struggle of the main character to overcome his disability.\nThis documentary about the oceans is acclaimed for its beautiful cinematography.\nThe costume design in this film is very futuristic.\nThe editing of a film can make it more intense and exciting.\nThe lighting in a film helps to create its mood.\nThe plot of the film is intriguing because it keeps the audience guessing what will happen next.`,
+        focuses: ["Film vocabulary", "Word stress", "Long sentence pauses"]
+      }
+    ];
+
+    let mediaRecorder, chunks = [], audioBlob = null;
+    let records = JSON.parse(localStorage.getItem("pronunciationRecords") || "[]");
+
+    const $ = id => document.getElementById(id);
+    const passageSelect = $("passageSelect");
+    passages.forEach(p => {
+      const opt = document.createElement("option"); opt.value = p.id; opt.textContent = p.title; passageSelect.appendChild(opt);
+    });
+    function currentPassage(){ return passages.find(p => p.id === passageSelect.value) || passages[0]; }
+    function updatePassage(){
+      const p = currentPassage();
+      $("passageText").textContent = p.text;
+      $("focusBox").innerHTML = p.focuses.map((f,i)=>`<div><b>Focus ${i+1}:</b> ${f}</div>`).join("");
+      resetRecording();
+    }
+    passageSelect.onchange = updatePassage; updatePassage();
+
+    $("studentTab").onclick = () => { $("studentView").classList.remove("hide"); $("teacherView").classList.add("hide"); $("studentTab").className=""; $("teacherTab").className="outline"; };
+    $("teacherTab").onclick = () => { $("studentView").classList.add("hide"); $("teacherView").classList.remove("hide"); $("teacherTab").className=""; $("studentTab").className="outline"; renderRecords(); };
+
+    $("startBtn").onclick = async () => {
+      try {
+        chunks = []; audioBlob = null; clearFeedback();
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          audioBlob = new Blob(chunks, { type: "audio/webm" });
+          $("audioPlayer").src = URL.createObjectURL(audioBlob);
+          $("audioBox").classList.remove("hide");
+          $("submitBtn").disabled = false;
+          stream.getTracks().forEach(t => t.stop());
+        };
+        mediaRecorder.start();
+        $("startBtn").disabled = true; $("stopBtn").disabled = false; $("recordingMsg").classList.remove("hide");
+      } catch (e) { alert("Please allow microphone access and try again."); }
+    };
+    $("stopBtn").onclick = () => { if(mediaRecorder){ mediaRecorder.stop(); } $("startBtn").disabled=false; $("stopBtn").disabled=true; $("recordingMsg").classList.add("hide"); };
+    $("resetBtn").onclick = resetRecording;
+    function resetRecording(){ audioBlob=null; $("audioPlayer").removeAttribute("src"); $("audioBox").classList.add("hide"); $("submitBtn").disabled=true; $("startBtn").disabled=false; $("stopBtn").disabled=true; $("recordingMsg").classList.add("hide"); clearFeedback(); }
+    function clearFeedback(){ $("emptyFeedback").classList.remove("hide"); $("loadingFeedback").classList.add("hide"); $("errorFeedback").classList.add("hide"); $("resultBox").classList.add("hide"); $("resultBox").innerHTML=""; }
+
+    $("submitBtn").onclick = async () => {
+      if(!audioBlob) return;
+      $("emptyFeedback").classList.add("hide"); $("loadingFeedback").classList.remove("hide"); $("errorFeedback").classList.add("hide"); $("resultBox").classList.add("hide");
+      const p = currentPassage();
+      const form = new FormData();
+      form.append("audio", audioBlob, "student-reading.webm");
+      form.append("passage", p.text);
+      form.append("passageTitle", p.title);
+      form.append("studentName", $("studentName").value || "Student");
+      form.append("studentClass", $("studentClass").value);
+      try {
+        const res = await fetch("/api/analyze-pronunciation", { method:"POST", body: form });
+        const data = await res.json();
+        if(!res.ok || data.error) throw new Error(data.message || data.error || "Analysis failed");
+        showResult(data);
+        saveRecord(data, p.title);
+      } catch(e) {
+        $("errorFeedback").textContent = e.message;
+        $("errorFeedback").classList.remove("hide");
+      } finally { $("loadingFeedback").classList.add("hide"); }
+    };
+
+    function showResult(data){
+      const scores = [
+        ["Pronunciation", data.pronunciation], ["Fluency", data.fluency], ["Overall", data.overall]
+      ];
+      const words = data.difficultWords || [];
+      $("resultBox").innerHTML = `
+        ${scores.map(([label,val])=>`<div class="score"><div class="scoretop"><span>${label}</span><span>${val ?? "N/A"}/100</span></div><div class="bar"><div class="fill" style="width:${Number(val)||0}%"></div></div></div>`).join("")}
+        <div class="box ok"><b>Feedback</b><ul>${(data.feedback||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+        <div class="box"><h3>Highlighted Pronunciation Feedback</h3><div class="passage">${data.highlightedText || escapeHtml(currentPassage().text)}</div></div>
+        <div class="box"><h3>Words to Practise</h3><div class="chips">${words.length ? words.map(w=>`<span class="chip">${escapeHtml(w)}</span>`).join("") : "<span class='sub'>No low-score words returned.</span>"}</div></div>
+      `;
+      $("resultBox").classList.remove("hide");
+    }
+    function escapeHtml(s){ return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function saveRecord(data, passageTitle){
+      const row = { name: $("studentName").value || "Student", className: $("studentClass").value, passageTitle, pronunciation:data.pronunciation ?? "", fluency:data.fluency ?? "", overall:data.overall ?? "", submittedAt:new Date().toLocaleString() };
+      records.unshift(row); localStorage.setItem("pronunciationRecords", JSON.stringify(records));
+    }
+    function renderRecords(){
+      $("recordsBody").innerHTML = records.map(r=>`<tr><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.className)}</td><td>${escapeHtml(r.passageTitle)}</td><td>${r.pronunciation}</td><td>${r.fluency}</td><td>${r.overall}</td><td>${escapeHtml(r.submittedAt)}</td></tr>`).join("") || `<tr><td colspan="7" class="sub">No records yet.</td></tr>`;
+    }
+    $("exportBtn").onclick = () => {
+      const header = ["Name","Class","Passage","Pronunciation","Fluency","Overall","Submitted At"];
+      const rows = records.map(r=>[r.name,r.className,r.passageTitle,r.pronunciation,r.fluency,r.overall,r.submittedAt]);
+      const csv = [header,...rows].map(row=>row.map(cell=>`"${String(cell).replaceAll('"','""')}"`).join(",")).join("\n");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"})); a.download="pronunciation-results.csv"; a.click();
+    };
+  </script>
+</body>
+</html>
